@@ -13,5 +13,8 @@ class Client extends Model
         'prenom',
         'email',
         'telephone',
+        'genre',
+        'user_fk',
+
     ];
 }
