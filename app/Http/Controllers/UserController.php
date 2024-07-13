@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
 use App\Models\User;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\ClientController;
 
 class UserController extends Controller
 {
@@ -40,32 +41,31 @@ class UserController extends Controller
 
     }
     public function register(Request $request){
-
+        $msg = "";
+        $data["client"] ="User System";
         $field = $request->validate([
             'username' =>'required|string',
             'password' => 'required|string',
-            'nom'=>'required|string',
-            'prenom'=>'required|string',
-            'email'=>'required|string',
-            'telephone'=>'required|string',
-            'genre'=>'required|string',
-            'user_fk'=>'required|int'
+            'email'=>'string',
+            'is_client'=>'required|bool'
         ]);
         $user = new User();
         $user->username = $field['username'];
         $user->password =  Hash::make($field['password']);
+        $user->email = $field['email']??"";
+        $user->is_client = $field['is_client'];
         $user->save();
+
         $token = $user->createToken('token')->plainTextToken;
-        Client::create([
-            'nom'=>$field['nom'],
-            'prenom'=>$field['prenom'],
-            'email'=>$field['email'],
-            'telephone' =>$field['telephone'],
-            'genre'=>$field['genre'],
-            'user_fk'=>$field['user_fk'],
-        ]);
+        if($field['is_client']){
+            $client = new ClientController();
+            $data = $client->store($request);
+
+        }
+
         return response()->json([
            'message' =>'register success',
+           'data' => $data['client'],
             'user' => $user,
             'token'=> $token
         ],200);
