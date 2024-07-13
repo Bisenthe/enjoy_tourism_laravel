@@ -70,4 +70,10 @@ class UserController extends Controller
             'token'=> $token
         ],200);
     }
+    public function index(){
+        $user = User::all();
+        return response()->json([
+             'user' => $user
+         ],200);
+    }
 }

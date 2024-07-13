@@ -12,7 +12,10 @@ class ClientController extends Controller
      */
     public function index()
     {
-        //
+        $client = Client::all();
+        return response()->json([
+             'user' => $client
+         ],200);
     }
 
     /**
